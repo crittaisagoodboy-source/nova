@@ -203,14 +203,10 @@ window.Wave = (function() {
     const pageEl = document.createElement('div');
     pageEl.className = 'page';
     pageEl.id = 'page-' + pageName;
-    pageEl.innerHTML = `
-      <div class="page-label">
-        <div class="page-label-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg></div>
-        <div><div class="page-label-text">${pageName}</div><div class="page-label-sub">Wave menu</div></div>
-      </div>
-      <div class="page-topbar" id="pt-${pageName}"></div>
-      <div id="tab-area-${pageName}" style="flex:1;overflow:hidden;position:relative"></div>
-    `;
+pageEl.innerHTML = `
+  <div class="page-topbar" id="pt-${pageName}"></div>
+  <div id="tab-area-${pageName}" style="flex:1;overflow:hidden;position:relative"></div>
+`;
     document.getElementById('page-area').appendChild(pageEl);
 
     _pages[pageName] = { el: pageEl, nav: nav, tabs: {}, firstTab: null };
