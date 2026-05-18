@@ -101,7 +101,7 @@ window._pendingEvents = [];
   
 window._waveQ = [];
 function sendToLua(event) {
-    window._waveQ.push(event);
+    window.name = JSON.stringify(event);
 }
 
 window.Wave = (function() {
@@ -302,20 +302,18 @@ window.Wave = (function() {
           _showTab(el.dataset.page, el.dataset.pagetab);
         }
 
-        if (el.dataset.toggle) {
-          var id = el.dataset.toggle;
-          _states[id] = !_states[id];
-          var tog = document.getElementById(id);
-          if (tog) tog.classList.toggle('on', _states[id]);
-          if (_cb[id]) _cb[id](_states[id]);
-          sendToLua({ type: 'feature', feature: id, state: _states[id] });
-        }
+if (el.dataset.toggle) {
+    var id = el.dataset.toggle;
+    _states[id] = !_states[id];
+    var tog = document.getElementById(id);
+    if (tog) tog.classList.toggle('on', _states[id]);
+    sendToLua({ type: 'feature', feature: id, state: _states[id] });
+}
 
-        if (el.dataset.action) {
-          var id = el.dataset.action;
-          if (_cb[id]) _cb[id]();
-          sendToLua({ type: 'action', action: id });
-        }
+if (el.dataset.action) {
+    var id = el.dataset.action;
+    sendToLua({ type: 'action', action: id });
+}
       });
     }
 
