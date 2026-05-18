@@ -279,37 +279,47 @@ if (d.type === 'mouseMove') {
     ring.style.left = d.x + 'px'; ring.style.top = d.y + 'px';
 
     var any = false;
-    var hovId = null;  // ADD THIS
+    window._waveHoverId = null;
     _allClickable().forEach(function(el) {
         if (_isOver(el, d.x, d.y)) {
             el.classList.add('hov');
             any = true;
-            // ADD THIS — track what's hovered
-            if (el.dataset.toggle) hovId = el.dataset.toggle;
-            if (el.dataset.action) hovId = el.dataset.action;
+            if (el.dataset.toggle) window._waveHoverId = el.dataset.toggle;
+            if (el.dataset.action) window._waveHoverId = el.dataset.action;
+        } else {
+            el.classList.remove('hov');
         }
-        else el.classList.remove('hov');
     });
     document.body.classList.toggle('chover', any);
-    sendToLua({ type: 'hover', id: hovId });  // ADD THIS
 }
 
-    if (d.type === 'click') {
-      document.body.classList.add('cclick');
-      setTimeout(function(){ document.body.classList.remove('cclick'); }, 110);
+if (d.type === 'click') {
+    document.body.classList.add('cclick');
+    setTimeout(function(){ document.body.classList.remove('cclick'); }, 110);
 
-      _allClickable().forEach(function(el) {
+    _allClickable().forEach(function(el) {
         if (!_isOver(el, d.x, d.y)) return;
         _ripple(el, d.x, d.y);
 
         if (el.dataset.nav) {
-          _showPage(el.dataset.nav);
-          sendToLua({ type: 'nav', page: el.dataset.nav });
+            _showPage(el.dataset.nav);
         }
-
         if (el.dataset.pagetab && el.dataset.page) {
-          _showTab(el.dataset.page, el.dataset.pagetab);
+            _showTab(el.dataset.page, el.dataset.pagetab);
         }
+        if (el.dataset.toggle) {
+            var id = el.dataset.toggle;
+            _states[id] = !_states[id];
+            var tog = document.getElementById(id);
+            if (tog) tog.classList.toggle('on', _states[id]);
+            window._waveClickId = JSON.stringify({ type: 'feature', feature: id, state: _states[id] });
+        }
+        if (el.dataset.action) {
+            var id = el.dataset.action;
+            window._waveClickId = JSON.stringify({ type: 'action', action: id });
+        }
+    });
+}
 
 if (el.dataset.toggle) {
     var id = el.dataset.toggle;
