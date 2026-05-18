@@ -99,6 +99,11 @@ body.cclick #cursor-dot{transform:translate(-50%,-50%) scale(.5)}
 <script>
 window._pendingEvents = [];
 
+  function sendToLua(event) {
+    window._pendingEvents.push(event);
+    console.log(JSON.stringify(event));
+}
+
 window.Wave = (function() {
   const _pages  = {};
   const _states = {};
@@ -290,7 +295,7 @@ window.Wave = (function() {
 
         if (el.dataset.nav) {
           _showPage(el.dataset.nav);
-          _emit({ type: 'nav', page: el.dataset.nav });
+          sendToLua({ type: 'nav', page: el.dataset.nav });
         }
 
         if (el.dataset.pagetab && el.dataset.page) {
@@ -303,13 +308,13 @@ window.Wave = (function() {
           var tog = document.getElementById(id);
           if (tog) tog.classList.toggle('on', _states[id]);
           if (_cb[id]) _cb[id](_states[id]);
-          _emit({ type: 'feature', feature: id, state: _states[id] });
+          sendToLua({ type: 'feature', feature: id, state: _states[id] });
         }
 
         if (el.dataset.action) {
           var id = el.dataset.action;
           if (_cb[id]) _cb[id]();
-          _emit({ type: 'action', action: id });
+          sendToLua({ type: 'action', action: id });
         }
       });
     }
