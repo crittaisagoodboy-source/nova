@@ -272,19 +272,27 @@ window.Wave = (function() {
     }
     if (!d || !d.type) return;
 
-    if (d.type === 'mouseMove') {
-      var dot  = document.getElementById('cursor-dot');
-      var ring = document.getElementById('cursor-ring');
-      dot.style.left  = d.x + 'px'; dot.style.top  = d.y + 'px';
-      ring.style.left = d.x + 'px'; ring.style.top = d.y + 'px';
+if (d.type === 'mouseMove') {
+    var dot  = document.getElementById('cursor-dot');
+    var ring = document.getElementById('cursor-ring');
+    dot.style.left  = d.x + 'px'; dot.style.top  = d.y + 'px';
+    ring.style.left = d.x + 'px'; ring.style.top = d.y + 'px';
 
-      var any = false;
-      _allClickable().forEach(function(el) {
-        if (_isOver(el, d.x, d.y)) { el.classList.add('hov'); any = true; }
+    var any = false;
+    var hovId = null;  // ADD THIS
+    _allClickable().forEach(function(el) {
+        if (_isOver(el, d.x, d.y)) {
+            el.classList.add('hov');
+            any = true;
+            // ADD THIS — track what's hovered
+            if (el.dataset.toggle) hovId = el.dataset.toggle;
+            if (el.dataset.action) hovId = el.dataset.action;
+        }
         else el.classList.remove('hov');
-      });
-      document.body.classList.toggle('chover', any);
-    }
+    });
+    document.body.classList.toggle('chover', any);
+    sendToLua({ type: 'hover', id: hovId });  // ADD THIS
+}
 
     if (d.type === 'click') {
       document.body.classList.add('cclick');
