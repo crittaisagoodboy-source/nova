@@ -97,8 +97,6 @@ body.cclick #cursor-dot{transform:translate(-50%,-50%) scale(.5)}
 </div>
 
 <script>
-// ── Event queue — Lua polls this directly via MachoExecuteDuiScript ──
-// Initialized immediately so it's always available, no patch needed.
 window._pendingEvents = [];
 
 window.Wave = (function() {
@@ -108,7 +106,6 @@ window.Wave = (function() {
   let _activePage   = null;
   let _activeTopTab = {};
 
-  // Push event into queue for Lua to pick up
   function _emit(data) {
     window._pendingEvents.push(data);
   }
@@ -205,8 +202,8 @@ window.Wave = (function() {
 
   // ── Visibility ───────────────────────────────────────────────────
   function _showPage(name) {
-    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     var pg = _pages[name];
     if (!pg) return;
     pg.el.classList.add('active');
@@ -217,8 +214,8 @@ window.Wave = (function() {
   function _showTab(pageName, tabName) {
     var pg = _pages[pageName];
     if (!pg) return;
-    Object.values(pg.tabs).forEach(function(t){ t.panel.classList.remove('active'); });
-    document.querySelectorAll('[data-page="' + pageName + '"]').forEach(function(b){ b.classList.remove('active'); });
+    Object.values(pg.tabs).forEach(t => t.panel.classList.remove('active'));
+    document.querySelectorAll('[data-page="' + pageName + '"]').forEach(b => b.classList.remove('active'));
     var tab = pg.tabs[tabName];
     if (!tab) return;
     tab.panel.classList.add('active');
@@ -227,97 +224,46 @@ window.Wave = (function() {
     if (btn) btn.classList.add('active');
   }
 
-  // ═════════════════════════════════════════
-  //  PUBLIC API
-  // ═════════════════════════════════════════
-
-  function SetUser(name, rank, initial) {
-    document.getElementById('foot-name').textContent   = name   || 'user';
-    document.getElementById('foot-rank').textContent   = rank   || 'USER';
-    document.getElementById('foot-avatar').textContent = (initial || name || 'U')[0].toUpperCase();
-  }
-
-  function CreatePage(pageName) {
-    return _getOrCreatePage(pageName);
-  }
-
-  function CreateTopTab(tabName, pageName) {
-    _getOrCreateTab(pageName, tabName);
-  }
-
-  function SetSectionTitle(pageName, tabName, side, title) {
-    var sec = _getSection(pageName, tabName, side || 'left');
-    if (sec.titleEl) sec.titleEl.textContent = title;
-  }
-
-  function CreateButton(label, tabName, pageName, callback, side) {
-    side = side || 'left';
-    var sec = _getSection(pageName, tabName, side);
-    var id  = 'act-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
-
-    var btn = document.createElement('div');
-    btn.className      = 'action-btn';
-    btn.dataset.action = id;
-    btn.innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px">' +
-      '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>' + label;
-    sec.body.appendChild(btn);
-
-    if (typeof callback === 'function') _cb[id] = callback;
-    return btn;
-  }
-
-  function CreateToggle(label, tabName, pageName, callback, side) {
-    side = side || 'left';
-    var sec = _getSection(pageName, tabName, side);
-    var id  = 'tog-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
-
-    // Always initialize to false — prevents stale state bleed between pages
-    _states[id] = false;
-
-    var row = document.createElement('div');
-    row.className      = 'feat';
-    row.dataset.toggle = id;
-    row.innerHTML =
-      '<div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
-      '<circle cx="12" cy="12" r="3"/></svg></div>' +
-      '<span class="feat-name">' + label + '</span>' +
-      '<div class="toggle" id="' + id + '"></div>' +
-      '<div class="bind">' + _bindIcon() + '</div>';
-    sec.body.appendChild(row);
-
-    if (typeof callback === 'function') _cb[id] = callback;
-    return row;
-  }
-
-  function SetToggleState(id, state) {
-    _states[id] = state;
-    var el = document.getElementById(id);
-    if (el) el.classList.toggle('on', state);
-  }
-
-  // ── Clickable element list ────────────────────────────────────────
+  // ── Only return clickable elements that are VISIBLE right now ────
+  // This is the core fix for toggle bleed across pages/tabs.
+  // Instead of querying the whole document, we only look inside the
+  // active page's active tab panel.
   function _allClickable() {
-    return [
+    var els = [
       ...document.querySelectorAll('.nav-item'),
-      ...document.querySelectorAll('.page-tab'),
-      ...document.querySelectorAll('.feat'),
-      ...document.querySelectorAll('.action-btn'),
       document.querySelector('.vip-btn'),
       document.querySelector('.gear-btn'),
     ].filter(Boolean);
+
+    // Add tabs from the active page only
+    if (_activePage) {
+      var ptEl = document.getElementById('pt-' + _activePage);
+      if (ptEl) {
+        ptEl.querySelectorAll('.page-tab').forEach(el => els.push(el));
+      }
+
+      // Add feats/buttons from the active tab panel only
+      var activeTabName = _activeTopTab[_activePage];
+      if (activeTabName) {
+        var panelId = 'tp-' + _activePage + '-' + activeTabName;
+        var panel = document.getElementById(panelId);
+        if (panel) {
+          panel.querySelectorAll('.feat').forEach(el => els.push(el));
+          panel.querySelectorAll('.action-btn').forEach(el => els.push(el));
+        }
+      }
+    }
+
+    return els;
   }
 
-  // ── Message handler — receives mouseMove/click/setState from Lua ─
+  // ── Message handler ──────────────────────────────────────────────
   window.addEventListener('message', function(ev) {
     var d = ev.data;
-
-    // MachoSendDuiMessage delivers a parsed object directly,
-    // but some environments deliver a JSON string — handle both.
+    // MachoSendDuiMessage may deliver a JSON string — parse it
     if (typeof d === 'string') {
       try { d = JSON.parse(d); } catch(e) { return; }
     }
-
     if (!d || !d.type) return;
 
     if (d.type === 'mouseMove') {
@@ -357,14 +303,12 @@ window.Wave = (function() {
           var tog = document.getElementById(id);
           if (tog) tog.classList.toggle('on', _states[id]);
           if (_cb[id]) _cb[id](_states[id]);
-          // Emit to Lua queue
           _emit({ type: 'feature', feature: id, state: _states[id] });
         }
 
         if (el.dataset.action) {
           var id = el.dataset.action;
           if (_cb[id]) _cb[id]();
-          // Emit to Lua queue
           _emit({ type: 'action', action: id });
         }
       });
@@ -374,6 +318,64 @@ window.Wave = (function() {
       SetToggleState(d.feature, d.state);
     }
   });
+
+  // ═══════════════════════════════════════
+  //  PUBLIC API
+  // ═══════════════════════════════════════
+  function SetUser(name, rank, initial) {
+    document.getElementById('foot-name').textContent   = name   || 'user';
+    document.getElementById('foot-rank').textContent   = rank   || 'USER';
+    document.getElementById('foot-avatar').textContent = (initial || name || 'U')[0].toUpperCase();
+  }
+
+  function CreatePage(pageName) { return _getOrCreatePage(pageName); }
+
+  function CreateTopTab(tabName, pageName) { _getOrCreateTab(pageName, tabName); }
+
+  function SetSectionTitle(pageName, tabName, side, title) {
+    var sec = _getSection(pageName, tabName, side || 'left');
+    if (sec.titleEl) sec.titleEl.textContent = title;
+  }
+
+  function CreateButton(label, tabName, pageName, callback, side) {
+    side = side || 'left';
+    var sec = _getSection(pageName, tabName, side);
+    var id  = 'act-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
+    var btn = document.createElement('div');
+    btn.className      = 'action-btn';
+    btn.dataset.action = id;
+    btn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px">' +
+      '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>' + label;
+    sec.body.appendChild(btn);
+    if (typeof callback === 'function') _cb[id] = callback;
+    return btn;
+  }
+
+  function CreateToggle(label, tabName, pageName, callback, side) {
+    side = side || 'left';
+    var sec = _getSection(pageName, tabName, side);
+    var id  = 'tog-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
+    _states[id] = false;
+    var row = document.createElement('div');
+    row.className      = 'feat';
+    row.dataset.toggle = id;
+    row.innerHTML =
+      '<div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
+      '<circle cx="12" cy="12" r="3"/></svg></div>' +
+      '<span class="feat-name">' + label + '</span>' +
+      '<div class="toggle" id="' + id + '"></div>' +
+      '<div class="bind">' + _bindIcon() + '</div>';
+    sec.body.appendChild(row);
+    if (typeof callback === 'function') _cb[id] = callback;
+    return row;
+  }
+
+  function SetToggleState(id, state) {
+    _states[id] = state;
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('on', state);
+  }
 
   return {
     SetUser: SetUser,
