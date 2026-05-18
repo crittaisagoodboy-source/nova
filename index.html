@@ -101,7 +101,8 @@ window._pendingEvents = [];
   
 window._waveQ = [];
 function sendToLua(event) {
-    window.name = JSON.stringify(event);
+    window._waveQueue = window._waveQueue || [];
+    window._waveQueue.push(event);
 }
 
 window.Wave = (function() {
