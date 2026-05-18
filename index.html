@@ -322,6 +322,24 @@ window.Wave = (function() {
     if (d.type === 'setState') {
       SetToggleState(d.feature, d.state);
     }
+    if (d.type === 'setUser') {
+    Wave.SetUser(d.name, d.rank, d.initial);
+}
+if (d.type === 'createPage') {
+    Wave.CreatePage(d.pageName);
+}
+if (d.type === 'createTopTab') {
+    Wave.CreateTopTab(d.tabName, d.pageName);
+}
+if (d.type === 'setSectionTitle') {
+    Wave.SetSectionTitle(d.pageName, d.tabName, d.side, d.title);
+}
+if (d.type === 'createButton') {
+    Wave.CreateButton(d.label, d.tabName, d.pageName, null, d.side);
+}
+if (d.type === 'createToggle') {
+    Wave.CreateToggle(d.label, d.tabName, d.pageName, null, d.side);
+}
   });
 
   // ═══════════════════════════════════════
