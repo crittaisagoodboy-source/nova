@@ -99,9 +99,8 @@ body.cclick #cursor-dot{transform:translate(-50%,-50%) scale(.5)}
 <script>
 window._pendingEvents = [];
 
-  function sendToLua(event) {
-    window._pendingEvents.push(event);
-    console.log(JSON.stringify(event));
+function sendToLua(event) {
+    window.parent.postMessage(JSON.stringify(event), "*");
 }
 
 window.Wave = (function() {
