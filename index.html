@@ -986,12 +986,12 @@
 
 window.addEventListener("message",(event)=>{
 
-
     let data = event.data;
 
+    if(data.type === "mouseMove"){
 
-
-    if(data.type === "mouseHover"){
+        cursor.style.left = data.x+"px";
+        cursor.style.top = data.y+"px";
 
 
         let el = document.elementFromPoint(
@@ -1002,49 +1002,29 @@ window.addEventListener("message",(event)=>{
 
         if(el){
 
+            el.dispatchEvent(new MouseEvent(
+                "mouseover",
+                {
+                    bubbles:true,
+                    clientX:data.x,
+                    clientY:data.y
+                }
+            ));
 
-            el.dispatchEvent(
-                new MouseEvent(
-                    "mousemove",
-                    {
-                        bubbles:true,
-                        clientX:data.x,
-                        clientY:data.y
-                    }
-                )
-            );
+
+            el.dispatchEvent(new MouseEvent(
+                "mousemove",
+                {
+                    bubbles:true,
+                    clientX:data.x,
+                    clientY:data.y
+                }
+            ));
 
 
         }
 
-
     }
-
-
-
-
-    if(data.type === "scroll"){
-
-
-        document.elementFromPoint(
-            window.innerWidth/2,
-            window.innerHeight/2
-        )?.dispatchEvent(
-
-            new WheelEvent(
-                "wheel",
-                {
-                    deltaY:data.amount * -500,
-                    bubbles:true
-                }
-            )
-
-        );
-
-
-    }
-
-
 
 });
   
@@ -1099,6 +1079,17 @@ window.addEventListener("message",(event)=>{
 
 
     }
+
+  if(data.type==="resize"){
+
+    win.style.width =
+    data.width+"px";
+
+
+    win.style.height =
+    data.height+"px";
+
+}
 
 
 
