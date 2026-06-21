@@ -1,433 +1,321 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Menu</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{overflow:hidden;background:transparent;cursor:none;font-family:'Poppins',system-ui,sans-serif;user-select:none;-webkit-user-select:none}
-#cursor-dot{position:fixed;width:7px;height:7px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .08s,background .12s}
-#cursor-ring{position:fixed;width:26px;height:26px;border:1.5px solid rgba(255,255,255,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .15s,height .15s,border-color .15s}
-body.chover #cursor-dot{background:#e74c4c;transform:translate(-50%,-50%) scale(1.5)}
-body.chover #cursor-ring{width:34px;height:34px;border-color:rgba(231,76,76,.6)}
-body.cclick #cursor-dot{transform:translate(-50%,-50%) scale(.5)}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.15);transform:scale(0);animation:ripple-anim .45s linear;pointer-events:none}
-@keyframes ripple-anim{to{transform:scale(2.5);opacity:0}}
-#shell{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;width:960px;height:580px;background:#100b0b;border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;opacity:0;animation:fadeIn .25s ease forwards}
-@keyframes fadeIn{to{opacity:1}}
-#sidebar{width:190px;flex-shrink:0;background:#0c0808;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;padding:0}
-.brand{padding:18px 18px 14px;font-size:20px;font-weight:700;color:#fff;letter-spacing:1px}
-.brand span{color:#c0392b}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:12px;font-weight:500;color:rgba(255,255,255,.45);cursor:none;transition:background .15s,color .15s;border-left:3px solid transparent;position:relative;overflow:hidden}
-.nav-item svg{width:14px;height:14px;opacity:.7;flex-shrink:0}
-.nav-item.active{background:rgba(192,57,43,.18);color:#e8e8e8;border-left-color:#c0392b}
-.nav-item.hov{background:rgba(255,255,255,.05);color:rgba(255,255,255,.7)}
-.sidebar-foot{margin-top:auto;padding:14px 16px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.05)}
-.avatar{width:30px;height:30px;border-radius:50%;background:#2a0e0e;display:flex;align-items:center;justify-content:center;font-size:12px;color:#c0392b;font-weight:700;flex-shrink:0}
-.foot-name{font-size:12px;font-weight:600;color:#e0e0e0}
-.foot-rank{font-size:10px;color:#c0392b;margin-top:1px}
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{height:46px;flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.06)}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.vip-btn{padding:5px 12px;border-radius:4px;border:1px solid rgba(255,255,255,.15);font-size:11px;color:rgba(255,255,255,.7);cursor:none;transition:background .15s,color .15s;position:relative;overflow:hidden}
-.vip-btn.hov{background:rgba(255,255,255,.08);color:#fff}
-.gear-btn{width:28px;height:28px;border-radius:4px;background:rgba(192,57,43,.25);border:1px solid rgba(192,57,43,.4);display:flex;align-items:center;justify-content:center;cursor:none;transition:background .15s;position:relative;overflow:hidden}
-.gear-btn svg{width:13px;height:13px;color:#e05a5a}
-.gear-btn.hov{background:rgba(192,57,43,.4)}
-#page-area{flex:1;overflow:hidden;position:relative;display:flex;flex-direction:column}
-.page{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .22s ease;overflow:hidden;display:flex;flex-direction:column}
-.page.active{opacity:1;pointer-events:all}
-.page-topbar{height:40px;flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 16px;border-bottom:1px solid rgba(255,255,255,.05)}
-.page-tab{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:4px;font-size:11px;color:rgba(255,255,255,.4);cursor:none;transition:background .15s,color .15s;position:relative;overflow:hidden}
-.page-tab.active{background:rgba(192,57,43,.2);color:#e8e8e8}
-.page-tab.hov{background:rgba(255,255,255,.06);color:rgba(255,255,255,.65)}
-.tab-panel{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .22s ease;overflow:hidden;display:flex;flex-direction:column}
-.tab-panel.active{opacity:1;pointer-events:all}
-.content{flex:1;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 16px}
-.section{background:#140e0e;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:0;overflow:hidden;display:flex;flex-direction:column}
-.section-head{padding:10px 14px 8px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(255,255,255,.05)}
-.section-dot{width:6px;height:6px;border-radius:50%;background:#c0392b;flex-shrink:0}
-.section-title{font-size:10px;font-weight:600;color:rgba(255,255,255,.45);letter-spacing:1.2px;text-transform:uppercase}
-.section-body{padding:6px 10px 10px;display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto}
-.feat{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:4px;transition:background .12s;cursor:none;position:relative;overflow:hidden}
-.feat.hov{background:rgba(255,255,255,.05)}
-.feat-icon{width:24px;height:24px;border-radius:4px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.feat-icon svg{width:12px;height:12px;color:rgba(255,255,255,.5)}
-.feat-name{flex:1;font-size:12px;color:rgba(255,255,255,.75);font-weight:500}
-.feat.hov .feat-name{color:#fff}
-.toggle{width:34px;height:19px;border-radius:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);position:relative;flex-shrink:0;cursor:none;transition:background .2s,border-color .2s}
-.toggle.on{background:#c0392b;border-color:#a93226}
-.toggle::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:transform .2s}
-.toggle.on::after{transform:translateX(15px)}
-.bind{width:21px;height:19px;border-radius:3px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:none;transition:background .12s}
-.bind svg{width:10px;height:10px;color:rgba(255,255,255,.3)}
-.feat.hov .bind{background:rgba(255,255,255,.1)}
-.action-btn{width:100%;padding:9px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:500;color:rgba(255,255,255,.65);display:flex;align-items:center;justify-content:center;gap:8px;cursor:none;transition:background .15s,color .15s,border-color .15s;margin-top:3px;position:relative;overflow:hidden}
-.action-btn.hov{background:rgba(192,57,43,.2);border-color:rgba(192,57,43,.4);color:#e0e0e0}
-.action-btn svg{width:12px;height:12px}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    color: #e0e0e0;
+    user-select: none;
+  }
+
+  #app {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+
+  #app.visible {
+    display: block;
+  }
+
+  .window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 460px;
+    background: #16161a;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .sidebar {
+    width: 150px;
+    background: #0c0c0e;
+    padding: 16px 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8195f;
+    padding: 0 16px;
+    margin-bottom: 18px;
+  }
+
+  .page-item {
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #cfcfcf;
+    cursor: default;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .page-item.active {
+    color: #e8195f;
+    background: rgba(232, 25, 95, 0.12);
+  }
+
+  .content {
+    flex: 1;
+    padding: 18px 20px;
+    overflow-y: auto;
+    position: relative;
+  }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: #3a3a3e; border-radius: 2px; }
+
+  .panel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #e8195f;
+    margin-bottom: 14px;
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1d1d22;
+    border: 1px solid #28282e;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+
+  .control-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #e3e3e3;
+  }
+
+  /* button */
+  .btn {
+    background: #e8195f;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 14px;
+    pointer-events: none;
+  }
+
+  /* toggle */
+  .toggle {
+    width: 34px;
+    height: 18px;
+    background: #2a2a2e;
+    border-radius: 9px;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .toggle.active { background: #e8195f; }
+  .toggle-dot {
+    width: 14px;
+    height: 14px;
+    background: #8a8a8e;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.15s, background 0.15s;
+  }
+  .toggle.active .toggle-dot { left: 18px; background: #fff; }
+
+  /* custom cursor */
+  #cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(0, 0);
+    will-change: transform;
+  }
+
+  #cursor.clicking svg path {
+    fill: #e8195f;
+  }
 </style>
 </head>
 <body>
-<div id="cursor-dot"></div>
-<div id="cursor-ring"></div>
-<div id="shell">
-  <div id="sidebar">
-    <div class="brand"><span>w</span>ave</div>
-    <div id="sidebar-nav"></div>
-    <div class="sidebar-foot">
-      <div class="avatar" id="foot-avatar">W</div>
-      <div>
-        <div class="foot-name" id="foot-name">user</div>
-        <div class="foot-rank" id="foot-rank">USER</div>
-      </div>
+
+<div id="app">
+  <div class="window">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="panel-title" id="pageTitle"></div>
+      <div id="controls"></div>
     </div>
-  </div>
-  <div id="main">
-    <div class="topbar">
-      <div id="topbar-tabs"></div>
-      <div class="topbar-right">
-        <div class="vip-btn" data-action="vip">Purchase VIP Access</div>
-        <div class="gear-btn" data-action="gear">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        </div>
-      </div>
-    </div>
-    <div id="page-area"></div>
   </div>
 </div>
 
+<svg id="cursor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3 2l7.5 18 2.5-7.5L20.5 10z" fill="#ffffff" stroke="#000" stroke-width="1"/>
+</svg>
+
 <script>
-window._pendingEvents = [];
-  
-window._waveQ = [];
-function sendToLua(event) {
-    window._waveQueue = window._waveQueue || [];
-    window._waveQueue.push(event);
-}
+/*
+  State model pushed entirely from Lua via MachoSendDuiMessage.
+  Lua owns layout + hit-testing. This script is a pure renderer:
+  it draws whatever state it's given and moves a synthetic cursor.
 
-window.Wave = (function() {
-  const _pages  = {};
-  const _states = {};
-  const _cb     = {};
-  let _activePage   = null;
-  let _activeTopTab = {};
+  Message types received (window 'message' event, e.data is JSON string):
+    { type: "init",      pages: [...] }                 -> full menu definition
+    { type: "show" } / { type: "hide" }                  -> toggle menu visibility
+    { type: "setPage",   page: "pageId" }                 -> switch active page
+    { type: "setState",  controlId: "...", value: ... }   -> update a single control's rendered value
+    { type: "mouseMove", x: 123, y: 456 }                  -> move custom cursor (screen px)
+    { type: "click",     x: 123, y: 456 }                  -> brief click animation on cursor
+*/
 
-  function _emit(data) {
-    window._pendingEvents.push(data);
-  }
+let menu = { pages: [] };
+let activePage = null;
 
-  function _ripple(el, x, y) {
-    const r = el.getBoundingClientRect();
-    const rip = document.createElement('span');
-    const sz  = Math.max(r.width, r.height);
-    rip.className = 'ripple';
-    rip.style.cssText = 'width:'+sz+'px;height:'+sz+'px;left:'+(x-r.left-sz/2)+'px;top:'+(y-r.top-sz/2)+'px;';
-    el.appendChild(rip);
-    rip.addEventListener('animationend', () => rip.remove());
-  }
+const app = document.getElementById('app');
+const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
+const pageTitle = document.getElementById('pageTitle');
+const controlsEl = document.getElementById('controls');
+const cursor = document.getElementById('cursor');
 
-  function _isOver(el, x, y) {
-    const r = el.getBoundingClientRect();
-    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
-  }
-
-  function _bindIcon() {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>';
-  }
-
-  // ── Page ─────────────────────────────────────────────────────────
-  function _getOrCreatePage(pageName) {
-    if (_pages[pageName]) return _pages[pageName];
-
-    const nav = document.createElement('div');
-    nav.className   = 'nav-item';
-    nav.dataset.nav = pageName;
-    nav.innerHTML   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>' + pageName;
-    document.getElementById('sidebar-nav').appendChild(nav);
-
-    const pageEl = document.createElement('div');
-    pageEl.className = 'page';
-    pageEl.id        = 'page-' + pageName;
-    pageEl.innerHTML =
-      '<div class="page-topbar" id="pt-' + pageName + '"></div>' +
-      '<div id="tab-area-' + pageName + '" style="flex:1;overflow:hidden;position:relative"></div>';
-    document.getElementById('page-area').appendChild(pageEl);
-
-    _pages[pageName] = { el: pageEl, nav: nav, tabs: {}, firstTab: null };
-    if (!_activePage) _showPage(pageName);
-    return _pages[pageName];
-  }
-
-  // ── Tab ──────────────────────────────────────────────────────────
-  function _getOrCreateTab(pageName, tabName) {
-    const pg = _getOrCreatePage(pageName);
-    if (pg.tabs[tabName]) return pg.tabs[tabName];
-
-    const tabBtn = document.createElement('div');
-    tabBtn.className       = 'page-tab';
-    tabBtn.dataset.pagetab = tabName;
-    tabBtn.dataset.page    = pageName;
-    tabBtn.textContent     = tabName;
-    document.getElementById('pt-' + pageName).appendChild(tabBtn);
-
-    const panel = document.createElement('div');
-    panel.className = 'tab-panel';
-    panel.id        = 'tp-' + pageName + '-' + tabName;
-
-    const grid = document.createElement('div');
-    grid.className = 'content';
-    grid.id        = 'tg-' + pageName + '-' + tabName;
-    panel.appendChild(grid);
-    document.getElementById('tab-area-' + pageName).appendChild(panel);
-
-    pg.tabs[tabName] = { panel: panel, grid: grid, left: null, right: null };
-    if (!pg.firstTab) { pg.firstTab = tabName; _showTab(pageName, tabName); }
-    return pg.tabs[tabName];
-  }
-
-  // ── Section ──────────────────────────────────────────────────────
-  function _getSection(pageName, tabName, side) {
-    const tab = _getOrCreateTab(pageName, tabName);
-    const key = (side === 'right') ? 'right' : 'left';
-    if (!tab[key]) {
-      const sec = _makeSection('');
-      tab.grid.appendChild(sec.wrap);
-      tab[key] = sec;
-    }
-    return tab[key];
-  }
-
-  function _makeSection(title) {
-    const wrap = document.createElement('div');
-    wrap.className = 'section';
-    wrap.innerHTML =
-      '<div class="section-head"><div class="section-dot"></div><span class="section-title">' + title + '</span></div>' +
-      '<div class="section-body"></div>';
-    return { wrap: wrap, body: wrap.querySelector('.section-body'), titleEl: wrap.querySelector('.section-title') };
-  }
-
-  // ── Visibility ───────────────────────────────────────────────────
-  function _showPage(name) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    var pg = _pages[name];
-    if (!pg) return;
-    pg.el.classList.add('active');
-    pg.nav.classList.add('active');
-    _activePage = name;
-  }
-
-  function _showTab(pageName, tabName) {
-    var pg = _pages[pageName];
-    if (!pg) return;
-    Object.values(pg.tabs).forEach(t => t.panel.classList.remove('active'));
-    document.querySelectorAll('[data-page="' + pageName + '"]').forEach(b => b.classList.remove('active'));
-    var tab = pg.tabs[tabName];
-    if (!tab) return;
-    tab.panel.classList.add('active');
-    _activeTopTab[pageName] = tabName;
-    var btn = document.querySelector('[data-pagetab="' + tabName + '"][data-page="' + pageName + '"]');
-    if (btn) btn.classList.add('active');
-  }
-
-  // ── Only return clickable elements that are VISIBLE right now ────
-  // This is the core fix for toggle bleed across pages/tabs.
-  // Instead of querying the whole document, we only look inside the
-  // active page's active tab panel.
-  function _allClickable() {
-    var els = [
-      ...document.querySelectorAll('.nav-item'),
-      document.querySelector('.vip-btn'),
-      document.querySelector('.gear-btn'),
-    ].filter(Boolean);
-
-    // Add tabs from the active page only
-    if (_activePage) {
-      var ptEl = document.getElementById('pt-' + _activePage);
-      if (ptEl) {
-        ptEl.querySelectorAll('.page-tab').forEach(el => els.push(el));
-      }
-
-      // Add feats/buttons from the active tab panel only
-      var activeTabName = _activeTopTab[_activePage];
-      if (activeTabName) {
-        var panelId = 'tp-' + _activePage + '-' + activeTabName;
-        var panel = document.getElementById(panelId);
-        if (panel) {
-          panel.querySelectorAll('.feat').forEach(el => els.push(el));
-          panel.querySelectorAll('.action-btn').forEach(el => els.push(el));
-        }
-      }
-    }
-
-    return els;
-  }
-
-  // ── Message handler ──────────────────────────────────────────────
-  window.addEventListener('message', function(ev) {
-    var d = ev.data;
-    // MachoSendDuiMessage may deliver a JSON string — parse it
-    if (typeof d === 'string') {
-      try { d = JSON.parse(d); } catch(e) { return; }
-    }
-    if (!d || !d.type) return;
-
-if (d.type === 'mouseMove') {
-    var dot  = document.getElementById('cursor-dot');
-    var ring = document.getElementById('cursor-ring');
-    dot.style.left  = d.x + 'px'; dot.style.top  = d.y + 'px';
-    ring.style.left = d.x + 'px'; ring.style.top = d.y + 'px';
-
-    var any = false;
-    window._waveHoverId = null;
-    _allClickable().forEach(function(el) {
-        if (_isOver(el, d.x, d.y)) {
-            el.classList.add('hov');
-            any = true;
-            if (el.dataset.toggle) window._waveHoverId = el.dataset.toggle;
-            if (el.dataset.action) window._waveHoverId = el.dataset.action;
-        } else {
-            el.classList.remove('hov');
-        }
-    });
-    document.body.classList.toggle('chover', any);
-  window.name = window._waveHoverId || '';
-}
-
-if (d.type === 'click') {
-    document.body.classList.add('cclick');
-    setTimeout(function(){ document.body.classList.remove('cclick'); }, 110);
-
-    _allClickable().forEach(function(el) {
-        if (!_isOver(el, d.x, d.y)) return;
-        _ripple(el, d.x, d.y);
-
-        if (el.dataset.nav) {
-            _showPage(el.dataset.nav);
-        }
-        if (el.dataset.pagetab && el.dataset.page) {
-            _showTab(el.dataset.page, el.dataset.pagetab);
-        }
-        if (el.dataset.toggle) {
-            var id = el.dataset.toggle;
-            _states[id] = !_states[id];
-            var tog = document.getElementById(id);
-            if (tog) tog.classList.toggle('on', _states[id]);
-            window._waveClickId = JSON.stringify({ type: 'feature', feature: id, state: _states[id] });
-        }
-        if (el.dataset.action) {
-            var id = el.dataset.action;
-            window._waveClickId = JSON.stringify({ type: 'action', action: id });
-        }
-    });
-}
-
-if (el.dataset.toggle) {
-    var id = el.dataset.toggle;
-    _states[id] = !_states[id];
-    var tog = document.getElementById(id);
-    if (tog) tog.classList.toggle('on', _states[id]);
-    sendToLua({ type: 'feature', feature: id, state: _states[id] });
-}
-
-if (el.dataset.action) {
-    var id = el.dataset.action;
-    sendToLua({ type: 'action', action: id });
-}
-      });
-    }
-
-    if (d.type === 'setState') {
-      SetToggleState(d.feature, d.state);
-    }
-    if (d.type === 'setUser') {
-    Wave.SetUser(d.name, d.rank, d.initial);
-}
-if (d.type === 'createPage') {
-    Wave.CreatePage(d.pageName);
-}
-if (d.type === 'createTopTab') {
-    Wave.CreateTopTab(d.tabName, d.pageName);
-}
-if (d.type === 'setSectionTitle') {
-    Wave.SetSectionTitle(d.pageName, d.tabName, d.side, d.title);
-}
-if (d.type === 'createButton') {
-    Wave.CreateButton(d.label, d.tabName, d.pageName, null, d.side);
-}
-if (d.type === 'createToggle') {
-    Wave.CreateToggle(d.label, d.tabName, d.pageName, null, d.side);
-}
+function renderSidebar() {
+  sidebar.innerHTML = '<div class="logo">MENU</div>';
+  menu.pages.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'page-item' + (p.id === activePage ? ' active' : '');
+    item.textContent = p.label;
+    item.dataset.pageId = p.id;
+    sidebar.appendChild(item);
   });
+}
 
-  // ═══════════════════════════════════════
-  //  PUBLIC API
-  // ═══════════════════════════════════════
-  function SetUser(name, rank, initial) {
-    document.getElementById('foot-name').textContent   = name   || 'user';
-    document.getElementById('foot-rank').textContent   = rank   || 'USER';
-    document.getElementById('foot-avatar').textContent = (initial || name || 'U')[0].toUpperCase();
+function renderPage() {
+  const page = menu.pages.find(p => p.id === activePage);
+  if (!page) {
+    pageTitle.textContent = '';
+    controlsEl.innerHTML = '';
+    return;
   }
+  pageTitle.textContent = page.label;
+  controlsEl.innerHTML = '';
 
-  function CreatePage(pageName) { return _getOrCreatePage(pageName); }
+  page.controls.forEach(c => {
+    const row = document.createElement('div');
+    row.className = 'control-row';
+    row.dataset.controlId = c.id;
 
-  function CreateTopTab(tabName, pageName) { _getOrCreateTab(pageName, tabName); }
+    const label = document.createElement('span');
+    label.className = 'control-label';
+    label.textContent = c.label;
+    row.appendChild(label);
 
-  function SetSectionTitle(pageName, tabName, side, title) {
-    var sec = _getSection(pageName, tabName, side || 'left');
-    if (sec.titleEl) sec.titleEl.textContent = title;
+    if (c.type === 'button') {
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = c.buttonText || 'Confirm';
+      row.appendChild(btn);
+    } else if (c.type === 'toggle') {
+      const toggle = document.createElement('div');
+      toggle.className = 'toggle' + (c.value ? ' active' : '');
+      toggle.innerHTML = '<div class="toggle-dot"></div>';
+      row.appendChild(toggle);
+    }
+
+    controlsEl.appendChild(row);
+  });
+}
+
+function setControlState(controlId, value) {
+  const page = menu.pages.find(p => p.id === activePage);
+  if (!page) return;
+  const ctrl = page.controls.find(c => c.id === controlId);
+  if (!ctrl) return;
+  ctrl.value = value;
+
+  const row = controlsEl.querySelector('[data-control-id="' + CSS.escape(controlId) + '"]');
+  if (!row) return;
+  const toggle = row.querySelector('.toggle');
+  if (toggle) toggle.classList.toggle('active', !!value);
+}
+
+function moveCursor(x, y) {
+  cursor.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+}
+
+function flashClick() {
+  cursor.classList.add('clicking');
+  setTimeout(() => cursor.classList.remove('clicking'), 120);
+}
+
+window.addEventListener('message', function (event) {
+  let msg;
+  try {
+    msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+  } catch (e) {
+    return;
   }
+  if (!msg || !msg.type) return;
 
-  function CreateButton(label, tabName, pageName, callback, side) {
-    side = side || 'left';
-    var sec = _getSection(pageName, tabName, side);
-    var id  = 'act-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
-    var btn = document.createElement('div');
-    btn.className      = 'action-btn';
-    btn.dataset.action = id;
-    btn.innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:13px;height:13px">' +
-      '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>' + label;
-    sec.body.appendChild(btn);
-    if (typeof callback === 'function') _cb[id] = callback;
-    return btn;
+  switch (msg.type) {
+    case 'init':
+      menu = { pages: msg.pages || [] };
+      activePage = menu.pages.length ? menu.pages[0].id : null;
+      renderSidebar();
+      renderPage();
+      break;
+
+    case 'show':
+      app.classList.add('visible');
+      break;
+
+    case 'hide':
+      app.classList.remove('visible');
+      break;
+
+    case 'setPage':
+      activePage = msg.page;
+      renderSidebar();
+      renderPage();
+      break;
+
+    case 'setState':
+      setControlState(msg.controlId, msg.value);
+      break;
+
+    case 'mouseMove':
+      moveCursor(msg.x, msg.y);
+      break;
+
+    case 'click':
+      moveCursor(msg.x, msg.y);
+      flashClick();
+      break;
   }
-
-  function CreateToggle(label, tabName, pageName, callback, side) {
-    side = side || 'left';
-    var sec = _getSection(pageName, tabName, side);
-    var id  = 'tog-' + pageName + '-' + tabName + '-' + label.replace(/\s/g, '_');
-    _states[id] = false;
-    var row = document.createElement('div');
-    row.className      = 'feat';
-    row.dataset.toggle = id;
-    row.innerHTML =
-      '<div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
-      '<circle cx="12" cy="12" r="3"/></svg></div>' +
-      '<span class="feat-name">' + label + '</span>' +
-      '<div class="toggle" id="' + id + '"></div>' +
-      '<div class="bind">' + _bindIcon() + '</div>';
-    sec.body.appendChild(row);
-    if (typeof callback === 'function') _cb[id] = callback;
-    return row;
-  }
-
-  function SetToggleState(id, state) {
-    _states[id] = state;
-    var el = document.getElementById(id);
-    if (el) el.classList.toggle('on', state);
-  }
-
-  return {
-    SetUser: SetUser,
-    CreatePage: CreatePage,
-    CreateTopTab: CreateTopTab,
-    CreateButton: CreateButton,
-    CreateToggle: CreateToggle,
-    SetToggleState: SetToggleState,
-    SetSectionTitle: SetSectionTitle
-  };
-})();
+});
 </script>
 </body>
 </html>
