@@ -985,6 +985,34 @@
 
 
 
+
+window.addEventListener("message",(event)=>{
+
+    let data = event.data;
+
+
+    if(data.type === "click"){
+
+
+        let element = document.elementFromPoint(
+            data.x,
+            data.y
+        );
+
+
+        if(element){
+
+            element.click();
+
+        }
+
+
+    }
+
+
+});
+  
+
 const cursor = document.getElementById("customCursor");
 
 
