@@ -21,7 +21,7 @@
     margin:0;
     width:100%;
     height:100%;
-    background:#070809;
+     background:transparent;
     background-image:
       radial-gradient(circle at 20% 20%, rgba(184,212,255,0.06), transparent 40%),
       radial-gradient(circle at 80% 80%, rgba(184,212,255,0.04), transparent 40%);
@@ -61,6 +61,10 @@
     content:""; position:absolute; right:4px; bottom:4px; width:6px; height:6px;
     border-right:2px solid var(--outline); border-bottom:2px solid var(--outline);
   }
+
+
+
+  
 
   /* ---------- top bar ---------- */
   .lib-top{
@@ -224,6 +228,54 @@
     background:var(--accent); background-image:linear-gradient(135deg,#fff,#aaa); color:#0d0f12;
   }
 
+
+
+
+#customCursor {
+
+    position:fixed;
+
+    width:18px;
+
+    height:18px;
+
+    pointer-events:none;
+
+    z-index:999999;
+
+    transform:translate(-50%,-50%);
+
+}
+
+
+#customCursor::before {
+
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+
+    width:0;
+
+    height:0;
+
+
+    border-left:9px solid white;
+
+    border-top:14px solid transparent;
+
+    border-bottom:3px solid transparent;
+
+
+    filter:drop-shadow(0 0 3px black);
+
+}
+  
   /* ---------- button ---------- */
   .lib-button{
     height:22px; border-radius:5px; background:var(--element);
@@ -388,7 +440,9 @@
 </head>
 <body>
 
-<div class="backdrop-hint"><span>RIGHT CTRL TO TOGGLE  ·  DRAG THE TOP BAR TO MOVE  ·  DRAG THE CORNER TO RESIZE</span></div>
+  <div id="customCursor"></div>
+
+<div class="backdrop-hint"><span> </span></div>
 
 <div class="lib-notif-holder" id="notifHolder"></div>
 <div class="lib-reopen" id="reopenBtn">Open</div>
@@ -929,6 +983,35 @@
     });
   })();
 
+
+
+const cursor = document.getElementById("customCursor");
+
+
+window.addEventListener("message",(event)=>{
+
+
+    let data = event.data;
+
+
+
+    if(data.type === "mouseMove"){
+
+
+        cursor.style.left =
+        data.x+"px";
+
+
+        cursor.style.top =
+        data.y+"px";
+
+
+    }
+
+
+
+});
+  
 
 
 // ================= MACHO DUI BRIDGE =================
