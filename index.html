@@ -60,6 +60,18 @@
     margin-bottom: 18px;
   }
 
+
+ /* separator / category header */
+.separator {
+  padding: 14px 14px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e8195f;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
   .page-item {
     padding: 9px 16px;
     font-size: 13px;
@@ -224,6 +236,15 @@ function renderPage() {
   controlsEl.innerHTML = '';
 
   page.controls.forEach(c => {
+    if (c.type === 'separator') {
+      // Render a category header
+      const sep = document.createElement('div');
+      sep.className = 'separator';
+      sep.textContent = c.label;
+      controlsEl.appendChild(sep);
+      return;
+    }
+
     const row = document.createElement('div');
     row.className = 'control-row';
     row.dataset.controlId = c.id;
