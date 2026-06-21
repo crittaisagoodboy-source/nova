@@ -984,6 +984,70 @@
   })();
 
 
+window.addEventListener("message",(event)=>{
+
+
+    let data = event.data;
+
+
+
+    if(data.type === "mouseHover"){
+
+
+        let el = document.elementFromPoint(
+            data.x,
+            data.y
+        );
+
+
+        if(el){
+
+
+            el.dispatchEvent(
+                new MouseEvent(
+                    "mousemove",
+                    {
+                        bubbles:true,
+                        clientX:data.x,
+                        clientY:data.y
+                    }
+                )
+            );
+
+
+        }
+
+
+    }
+
+
+
+
+    if(data.type === "scroll"){
+
+
+        document.elementFromPoint(
+            window.innerWidth/2,
+            window.innerHeight/2
+        )?.dispatchEvent(
+
+            new WheelEvent(
+                "wheel",
+                {
+                    deltaY:data.amount * -500,
+                    bubbles:true
+                }
+            )
+
+        );
+
+
+    }
+
+
+
+});
+  
 
 
 window.addEventListener("message",(event)=>{
