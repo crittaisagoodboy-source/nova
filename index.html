@@ -1085,23 +1085,34 @@
     }
 
     // ── lua-driven drag-move ──────────────────────────────────────
-    // startDrag: snapshot origin; dragDelta: move by delta each frame
+    // Only starts a drag if the cursor is actually over the top or bottom bar.
+    // This prevents clicks on toggles/buttons/sliders from triggering a drag.
     if (data.type === 'startDrag') {
-      const r = win.getBoundingClientRect();
-      win.style.transform = 'none';
-      win.style.left = r.left + 'px';
-      win.style.top  = r.top  + 'px';
-      win._luaDragOX = r.left;
-      win._luaDragOY = r.top;
+      const topBar    = document.getElementById('dragHandle');
+      const bottomBar = document.getElementById('bottomBar');
+      const el = document.elementFromPoint(data.x, data.y);
+      const onTop    = topBar    && topBar.contains(el)    && !el.closest('.lib-tabs');
+      const onBottom = bottomBar && bottomBar.contains(el) && !el.closest('.lib-bottom-right');
+      if (onTop || onBottom) {
+        const r = win.getBoundingClientRect();
+        win.style.transform = 'none';
+        win.style.left = r.left + 'px';
+        win.style.top  = r.top  + 'px';
+        win._luaDragOX = r.left;
+        win._luaDragOY = r.top;
+        win._luaDragging = true;
+      } else {
+        win._luaDragging = false;
+      }
     }
 
-    if (data.type === 'dragDelta') {
+    if (data.type === 'dragDelta' && win._luaDragging) {
       win.style.left = ((win._luaDragOX || 0) + (data.dx || 0)) + 'px';
       win.style.top  = ((win._luaDragOY || 0) + (data.dy || 0)) + 'px';
     }
 
     if (data.type === 'stopDrag') {
-      // nothing needed — position is already committed
+      win._luaDragging = false;
     }
 
     // ── notifications ────────────────────────────────────────────
