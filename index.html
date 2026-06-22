@@ -830,38 +830,53 @@ function sendToLua(data){
     }
 
     /* add element — callbacks are no-ops here; Lua handles all logic */
+ /* add element */
     if(data.type==='element'){
       const page=window[data.page];
       if(!page) return;
       const section=page.section(data.section||'Main', data.side||1, data.icon||'cog');
 
-if(data.element==='button'){
-  const ref=section.button({ id:data.id, name:data.name, callback:()=>{
-    sendToLua({ type:'elementClick', id:data.id });
-  }});
-  _elementRefs[data.id]=ref;
-}
+      if(data.element==='button'){
+        const ref=section.button({
+          id:data.id,
+          name:data.name,
+          callback:()=>{ sendToLua({ type:'elementClick', id:data.id }); }
+        });
+        _elementRefs[data.id]=ref;
+      }
 
-if(data.element==='toggle'){
-  const ref=section.toggle({ id:data.id, name:data.name, default:data.value||false, callback:(v)=>{
-    sendToLua({ type:'elementChange', id:data.id, value:v });
-  }});
-  _elementRefs[data.id]=ref;
-}
+      if(data.element==='toggle'){
+        const ref=section.toggle({
+          id:data.id,
+          name:data.name,
+          default:data.value||false,
+          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+        });
+        _elementRefs[data.id]=ref;
+      }
 
-if(data.element==='slider'){
-  const ref=section.slider({ id:data.id, name:data.name, min:data.min, max:data.max, default:data.value, callback:(v)=>{
-    sendToLua({ type:'elementChange', id:data.id, value:v });
-  }});
-  _elementRefs[data.id]=ref;
-}
+      if(data.element==='slider'){
+        const ref=section.slider({
+          id:data.id,
+          name:data.name,
+          min:data.min,
+          max:data.max,
+          default:data.value,
+          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+        });
+        _elementRefs[data.id]=ref;
+      }
 
-if(data.element==='dropdown'){
-  const ref=section.dropdown({ id:data.id, name:data.name, items:data.items||[], callback:(v)=>{
-    sendToLua({ type:'elementChange', id:data.id, value:v });
-  }});
-  _elementRefs[data.id]=ref;
-}
+      if(data.element==='dropdown'){
+        const ref=section.dropdown({
+          id:data.id,
+          name:data.name,
+          items:data.items||[],
+          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+        });
+        _elementRefs[data.id]=ref;
+      }
+    }
 
     /* ── updateElement — Lua tells JS to visually reflect new state ── */
     if(data.type==='updateElement'){
