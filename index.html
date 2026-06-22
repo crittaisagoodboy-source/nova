@@ -1146,49 +1146,57 @@
     }
 
     // ── add element ──────────────────────────────────────────────
-    if (data.type === 'element') {
-      const page = window[data.page];
-      if (!page) return;
+if (data.type === 'element') {
+  const page = window[data.page];
+  if (!page) return;
 
-      const section = page.section(
-        data.section || 'Main',
-        data.side || 1,
-        data.icon || 'cog'
-      );
+  const section = page.section(
+    data.section || 'Main',
+    data.side || 1,
+    data.icon || 'cog'
+  );
 
-      if (data.element === 'button') {
-        section.button({
-          name: data.name,
-          callback: () => console.log('Button clicked:', data.name)
-        });
+  if (data.element === 'button') {
+    section.button({
+      name: data.name,
+      callback: () => {
+        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: true }), '*');
       }
+    });
+  }
 
-      if (data.element === 'toggle') {
-        section.toggle({
-          name: data.name,
-          default: data.value || false,
-          callback: (value) => console.log(data.name, value)
-        });
+  if (data.element === 'toggle') {
+    section.toggle({
+      name: data.name,
+      default: data.value || false,
+      callback: (value) => {
+        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
       }
+    });
+  }
 
-      if (data.element === 'slider') {
-        section.slider({
-          name: data.name,
-          min: data.min,
-          max: data.max,
-          default: data.value,
-          callback: (value) => console.log(data.name, value)
-        });
+  if (data.element === 'slider') {
+    section.slider({
+      name: data.name,
+      min: data.min,
+      max: data.max,
+      default: data.value,
+      callback: (value) => {
+        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
       }
+    });
+  }
 
-      if (data.element === 'dropdown') {
-        section.dropdown({
-          name: data.name,
-          items: data.items || [],
-          callback: (value) => console.log(data.name, value)
-        });
+  if (data.element === 'dropdown') {
+    section.dropdown({
+      name: data.name,
+      items: data.items || [],
+      callback: (value) => {
+        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
       }
-    }
+    });
+  }
+}
   });
 
   /* ============================================================
