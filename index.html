@@ -863,11 +863,17 @@
       page.classList.add('active');
     });
 
+    // cache: "sectionName:side" -> section api so we reuse instead of duplicate
+    const _sectionCache = {};
+
     return {
       activate(){ tab.click(); },
       section(name, side, iconKey){
+        const cacheKey = name + ':' + (side || 1);
+        if (_sectionCache[cacheKey]) return _sectionCache[cacheKey];
         const s = makeSection(name, iconKey);
         (side===2 ? right : left).append(s.node);
+        _sectionCache[cacheKey] = s;
         return s;
       }
     };
