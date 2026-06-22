@@ -232,15 +232,16 @@
     z-index:999999;
   }
 
-  #customCursor::before {
-    content:"";
+  #customCursor img {
     position:absolute;
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:#fff;
-    box-shadow:0 0 0 1.5px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.4);
-    transform:translate(-50%,-50%);
+    /* Aero Arrow hotspot is top-left corner, so no offset needed */
+    top:0;
+    left:0;
+    width:32px;
+    height:32px;
+    display:block;
+    /* keep it crisp — cursor images shouldn't be smoothed */
+    image-rendering:pixelated;
   }
   
   /* ---------- button ---------- */
@@ -409,7 +410,7 @@
 </head>
 <body>
 
-<div id="customCursor"></div>
+<div id="customCursor"><img id="cursorImg" src="" alt=""></div>
 
 <div class="backdrop-hint"><span> </span></div>
 
@@ -1022,6 +1023,7 @@
      MESSAGE BRIDGE — all postMessage handlers unified here
      ============================================================ */
   const cursor = document.getElementById('customCursor');
+  document.getElementById('cursorImg').src = 'https://github.com/crittaisagoodboy-source/nova/blob/main/icons8-base-cursor-32.png?raw=true';
   let _cursorX = 0, _cursorY = 0;
 
   window.addEventListener('message', (event) => {
@@ -1043,7 +1045,11 @@
 
     // ── click ────────────────────────────────────────────────────
     if (data.type === 'click') {
-      const element = document.elementFromPoint(data.x, data.y);
+      let element = document.elementFromPoint(data.x, data.y);
+      // SVG elements and text nodes don't have .click() — walk up to a real HTMLElement
+      while (element && typeof element.click !== 'function') {
+        element = element.parentElement;
+      }
       if (element) element.click();
     }
 
