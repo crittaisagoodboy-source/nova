@@ -1156,47 +1156,44 @@ if (data.type === 'element') {
     data.icon || 'cog'
   );
 
-  if (data.element === 'button') {
-    section.button({
-      name: data.name,
-      callback: () => {
-        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: true }), '*');
-      }
-    });
-  }
-
-  if (data.element === 'toggle') {
-    section.toggle({
-      name: data.name,
-      default: data.value || false,
-      callback: (value) => {
-        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
-      }
-    });
-  }
-
-  if (data.element === 'slider') {
-    section.slider({
-      name: data.name,
-      min: data.min,
-      max: data.max,
-      default: data.value,
-      callback: (value) => {
-        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
-      }
-    });
-  }
-
-  if (data.element === 'dropdown') {
-    section.dropdown({
-      name: data.name,
-      items: data.items || [],
-      callback: (value) => {
-        window.parent.postMessage(JSON.stringify({ type: 'confirm', id: data.id, value: value }), '*');
-      }
-    });
-  }
+if (data.element === 'toggle') {
+  section.toggle({
+    id: data.id,        // ← add
+    name: data.name,
+    default: data.value || false,
+    callback: () => {}  // no-op, Lua handles it
+  });
 }
+
+if (data.element === 'slider') {
+  section.slider({
+    id: data.id,        // ← add
+    name: data.name,
+    min: data.min,
+    max: data.max,
+    default: data.value,
+    callback: () => {}
+  });
+}
+
+if (data.element === 'dropdown') {
+  section.dropdown({
+    id: data.id,        // ← add
+    name: data.name,
+    items: data.items || [],
+    callback: () => {}
+  });
+}
+
+if (data.element === 'button') {
+  section.button({
+    id: data.id,        // ← add
+    name: data.name,
+    callback: () => {}
+  });
+}
+
+  
   });
 
   /* ============================================================
