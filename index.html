@@ -226,24 +226,21 @@
 
   #customCursor {
     position:fixed;
-    width:18px;
-    height:18px;
+    width:0;
+    height:0;
     pointer-events:none;
     z-index:999999;
-    transform:translate(-50%,-50%);
   }
 
   #customCursor::before {
     content:"";
     position:absolute;
-    left:0;
-    top:0;
-    width:0;
-    height:0;
-    border-left:9px solid white;
-    border-top:14px solid transparent;
-    border-bottom:3px solid transparent;
-    filter:drop-shadow(0 0 3px black);
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 0 0 1.5px rgba(0,0,0,0.6), 0 0 6px rgba(0,0,0,0.4);
+    transform:translate(-50%,-50%);
   }
   
   /* ---------- button ---------- */
@@ -1044,10 +1041,35 @@
       duiScroll(_cursorX, _cursorY, data.amount);
     }
 
-    // ── window resize ────────────────────────────────────────────
+    // ── window resize (instant set) ──────────────────────────────
     if (data.type === 'resize') {
       win.style.width  = data.width  + 'px';
       win.style.height = data.height + 'px';
+    }
+
+    // ── lua-driven drag-resize ────────────────────────────────────
+    // startResize: begin tracking; resizeDelta: apply delta each frame
+    if (data.type === 'startResize') {
+      const r = win.getBoundingClientRect();
+      win._luaResizeW = r.width;
+      win._luaResizeH = r.height;
+      // snap position so transform doesn't interfere
+      win.style.transform = 'none';
+      win.style.left = r.left + 'px';
+      win.style.top  = r.top  + 'px';
+    }
+
+    if (data.type === 'resizeDelta') {
+      const baseW = win._luaResizeW || 660;
+      const baseH = win._luaResizeH || 520;
+      win.style.width  = Math.max(480, baseW + (data.dx || 0)) + 'px';
+      win.style.height = Math.max(380, baseH + (data.dy || 0)) + 'px';
+    }
+
+    if (data.type === 'stopResize') {
+      const r = win.getBoundingClientRect();
+      win._luaResizeW = r.width;
+      win._luaResizeH = r.height;
     }
 
     // ── notifications ────────────────────────────────────────────
