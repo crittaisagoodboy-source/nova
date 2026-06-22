@@ -429,7 +429,7 @@
 
   <div class="lib-content" id="content"></div>
 
-  <div class="lib-bottom">
+  <div class="lib-bottom" id="bottomBar">
     <div class="lib-bottom-text">
       <div class="lib-bottom-title">lds13</div>
       <div class="lib-bottom-sub">v1.0 · html edition</div>
@@ -896,19 +896,31 @@
      WINDOW: drag + resize + open/close
      ============================================================ */
   (function(){
-    const handle = document.getElementById('dragHandle');
+    const handle    = document.getElementById('dragHandle');
+    const bottomBar = document.getElementById('bottomBar');
     let dragging=false, sx=0, sy=0, ox=0, oy=0;
-    handle.addEventListener('mousedown', e=>{
-      if(e.target.closest('.lib-tabs')) return;
+
+    function startDragAt(clientX, clientY) {
       dragging=true;
       const r = win.getBoundingClientRect();
-      sx=e.clientX; sy=e.clientY; ox=r.left; oy=r.top;
+      sx=clientX; sy=clientY; ox=r.left; oy=r.top;
       win.style.transform='none'; win.style.left=ox+'px'; win.style.top=oy+'px';
+    }
+
+    handle.addEventListener('mousedown', e=>{
+      if(e.target.closest('.lib-tabs')) return;
+      startDragAt(e.clientX, e.clientY);
     });
+    bottomBar.addEventListener('mousedown', e=>{
+      // don't interfere with gear/search buttons
+      if(e.target.closest('.lib-bottom-right')) return;
+      startDragAt(e.clientX, e.clientY);
+    });
+
     window.addEventListener('mousemove', e=>{
       if(!dragging) return;
       win.style.left = (ox + e.clientX - sx)+'px';
-      win.style.top = (oy + e.clientY - sy)+'px';
+      win.style.top  = (oy + e.clientY - sy)+'px';
     });
     window.addEventListener('mouseup', ()=> dragging=false);
 
@@ -1070,6 +1082,26 @@
       const r = win.getBoundingClientRect();
       win._luaResizeW = r.width;
       win._luaResizeH = r.height;
+    }
+
+    // ── lua-driven drag-move ──────────────────────────────────────
+    // startDrag: snapshot origin; dragDelta: move by delta each frame
+    if (data.type === 'startDrag') {
+      const r = win.getBoundingClientRect();
+      win.style.transform = 'none';
+      win.style.left = r.left + 'px';
+      win.style.top  = r.top  + 'px';
+      win._luaDragOX = r.left;
+      win._luaDragOY = r.top;
+    }
+
+    if (data.type === 'dragDelta') {
+      win.style.left = ((win._luaDragOX || 0) + (data.dx || 0)) + 'px';
+      win.style.top  = ((win._luaDragOY || 0) + (data.dy || 0)) + 'px';
+    }
+
+    if (data.type === 'stopDrag') {
+      // nothing needed — position is already committed
     }
 
     // ── notifications ────────────────────────────────────────────
