@@ -30,7 +30,6 @@
     overflow:hidden;
   }
 
-  /* backdrop hint text, purely cosmetic, mimics a roblox viewport */
   .backdrop-hint{
     position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center;
     pointer-events:none; padding-bottom:18px;
@@ -61,10 +60,6 @@
     content:""; position:absolute; right:4px; bottom:4px; width:6px; height:6px;
     border-right:2px solid var(--outline); border-bottom:2px solid var(--outline);
   }
-
-
-
-  
 
   /* ---------- top bar ---------- */
   .lib-top{
@@ -104,7 +99,7 @@
     transition:background .15s;
   }
   .lib-tab svg{width:16px; height:16px; opacity:.5; transition:opacity .15s, fill .15s;}
-  .lib-tab:hover svg{opacity:.85;}
+  .lib-tab:hover svg, .lib-tab.dui-hover svg{opacity:.85;}
   .lib-tab.active svg{opacity:1; fill:#0d0f12;}
   .lib-tab .accent-fill{
     position:absolute; inset:0; border-radius:6px; background:var(--accent);
@@ -155,7 +150,7 @@
 
   /* ---------- generic row label ---------- */
   .lib-row-label{font-size:14px; color:var(--dark-text); transition:color .15s; cursor:default;}
-  .lib-row:hover .lib-row-label{color:var(--text);}
+  .lib-row:hover .lib-row-label, .lib-row.dui-hover .lib-row-label{color:var(--text);}
 
   /* ---------- toggle ---------- */
   .lib-toggle{
@@ -176,7 +171,7 @@
   .lib-toggle.on .lib-toggle-check{opacity:1;}
   .lib-toggle .lib-row-label{transition:color .15s;}
   .lib-toggle.on .lib-row-label{color:var(--text);}
-  .lib-toggle:hover .lib-row-label{color:var(--text);}
+  .lib-toggle:hover .lib-row-label, .lib-toggle.dui-hover .lib-row-label{color:var(--text);}
 
   .lib-sub{margin-left:auto; display:flex; align-items:center; gap:6px;}
 
@@ -196,18 +191,19 @@
     position:absolute; right:0; top:50%; width:10px; height:10px; border-radius:50%;
     background:linear-gradient(180deg,#fff,#aaa); transform:translate(50%,-50%);
   }
-  .lib-slider:hover .lib-row-label, .lib-slider:hover .lib-slider-value{color:var(--text);}
+  .lib-slider:hover .lib-row-label, .lib-slider:hover .lib-slider-value,
+  .lib-slider.dui-hover .lib-row-label, .lib-slider.dui-hover .lib-slider-value{color:var(--text);}
 
   /* ---------- dropdown ---------- */
   .lib-dropdown{display:flex; flex-direction:column; gap:6px;}
   .lib-dropdown-label{font-size:14px; color:var(--dark-text); transition:color .15s;}
-  .lib-dropdown:hover .lib-dropdown-label{color:var(--text);}
+  .lib-dropdown:hover .lib-dropdown-label, .lib-dropdown.dui-hover .lib-dropdown-label{color:var(--text);}
   .lib-dropdown-box{
     height:24px; border-radius:5px; background:var(--element);
     display:flex; align-items:center; padding:0 10px; cursor:pointer; gap:8px;
   }
   .lib-dropdown-box span{font-size:14px; color:var(--dark-text); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:color .15s;}
-  .lib-dropdown-box:hover span{color:var(--text);}
+  .lib-dropdown-box:hover span, .lib-dropdown-box.dui-hover span{color:var(--text);}
   .lib-dropdown-box svg{width:14px; height:14px; opacity:.5; flex-shrink:0; transition:transform .2s;}
   .lib-dropdown-box.open svg{transform:rotate(180deg);}
 
@@ -223,58 +219,32 @@
     transition:background .15s, color .15s; margin-bottom:4px;
   }
   .lib-dropdown-option:last-child{margin-bottom:0;}
-  .lib-dropdown-option:hover{color:var(--text);}
+  .lib-dropdown-option:hover, .lib-dropdown-option.dui-hover{color:var(--text);}
   .lib-dropdown-option.selected{
     background:var(--accent); background-image:linear-gradient(135deg,#fff,#aaa); color:#0d0f12;
   }
 
-
-
-
-#customCursor {
-
+  #customCursor {
     position:fixed;
-
     width:18px;
-
     height:18px;
-
     pointer-events:none;
-
     z-index:999999;
-
     transform:translate(-50%,-50%);
+  }
 
-}
-
-
-#customCursor::before {
-
-
+  #customCursor::before {
     content:"";
-
     position:absolute;
-
     left:0;
-
     top:0;
-
-
     width:0;
-
     height:0;
-
-
     border-left:9px solid white;
-
     border-top:14px solid transparent;
-
     border-bottom:3px solid transparent;
-
-
     filter:drop-shadow(0 0 3px black);
-
-}
+  }
   
   /* ---------- button ---------- */
   .lib-button{
@@ -288,8 +258,10 @@
     background-image:linear-gradient(135deg,#fff,#aaa);
     opacity:0; transform:scale(.6); transition:opacity .2s, transform .2s;
   }
-  .lib-button:active .accent-fill{opacity:1; transform:scale(1);}
-  .lib-button:active span{color:#0d0f12;}
+  .lib-button:active .accent-fill, .lib-button.dui-active .accent-fill{opacity:1; transform:scale(1);}
+  .lib-button:active span, .lib-button.dui-active span{color:#0d0f12;}
+  /* hover on button label */
+  .lib-button:hover span, .lib-button.dui-hover span{color:var(--text);}
 
   /* ---------- label row w/ sub elements ---------- */
   .lib-label-row{display:flex; align-items:center; min-height:16px;}
@@ -340,7 +312,7 @@
     font-size:14px; color:var(--dark-text); background:none; border:none; cursor:pointer;
     white-space:nowrap; transition:color .15s;
   }
-  .lib-keybind-btn:hover{color:var(--text);}
+  .lib-keybind-btn:hover, .lib-keybind-btn.dui-hover{color:var(--text);}
   .lib-keybind-popup{
     position:fixed; z-index:9999; width:67px; background:var(--background);
     border:1px solid var(--outline); border-radius:6px; padding:6px 0 6px 8px;
@@ -440,7 +412,7 @@
 </head>
 <body>
 
-  <div id="customCursor"></div>
+<div id="customCursor"></div>
 
 <div class="backdrop-hint"><span> </span></div>
 
@@ -480,9 +452,6 @@
 </div>
 
 <script>
-/* ============================================================
-   tiny "library" — recreation of the lds13 UI kit, in HTML/JS
-   ============================================================ */
 (function(){
 
   const ICONS = {
@@ -493,14 +462,12 @@
     bell: '<svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2"/></svg>'
   };
 
-  /* ---------------- root state ---------------- */
   const flags = {};
   const win = document.getElementById('window');
   const tabBar = document.getElementById('tabBar');
   const content = document.getElementById('content');
   const searchInput = document.getElementById('searchInput');
 
-  /* ---------------- helpers ---------------- */
   function el(tag, cls, html){
     const e = document.createElement(tag);
     if(cls) e.className = cls;
@@ -517,6 +484,60 @@
     }
     const toHex = c => ('0'+Math.round(c*255).toString(16)).slice(-2);
     return '#'+toHex(r)+toHex(g)+toHex(b);
+  }
+
+  /* ============================================================
+     DUI HOVER SYSTEM
+     Browsers block synthetic events from triggering CSS :hover.
+     We track the element under the cursor and apply .dui-hover
+     to it and its ancestors, giving us full hover styling.
+     ============================================================ */
+  let _lastHovered = null;
+
+  function duiHover(x, y) {
+    const target = document.elementFromPoint(x, y);
+
+    // clear previous hover chain
+    if (_lastHovered) {
+      let node = _lastHovered;
+      while (node && node !== document.body) {
+        node.classList.remove('dui-hover');
+        node = node.parentElement;
+      }
+    }
+
+    if (!target || target === document.body || target === document.documentElement) {
+      _lastHovered = null;
+      return;
+    }
+
+    // apply hover to target and all ancestors up to body
+    let node = target;
+    while (node && node !== document.body) {
+      node.classList.add('dui-hover');
+      node = node.parentElement;
+    }
+
+    _lastHovered = target;
+  }
+
+  /* ============================================================
+     DUI SCROLL SYSTEM
+     Find the nearest scrollable ancestor at (x,y) and scroll it.
+     ============================================================ */
+  function duiScroll(x, y, amount) {
+    let target = document.elementFromPoint(x, y);
+    while (target && target !== document.body) {
+      const style = getComputedStyle(target);
+      const overflowY = style.overflowY;
+      const canScroll = (overflowY === 'auto' || overflowY === 'scroll') && target.scrollHeight > target.clientHeight;
+      if (canScroll) {
+        // amount from GTA is -1 to 1 (up/down), multiply for px
+        target.scrollBy({ top: -amount * 80, behavior: 'smooth' });
+        return;
+      }
+      target = target.parentElement;
+    }
   }
 
   /* ============================================================
@@ -684,7 +705,6 @@
       body.append(row);
 
       const labelApi = { node: row, sub };
-
       labelApi.colorpicker = function(opts){ return makeColorpicker(sub, opts); };
       labelApi.keybind = function(opts){ return makeKeybind(sub, opts); };
       return labelApi;
@@ -983,435 +1003,128 @@
     });
   })();
 
-
-window.addEventListener("message",(event)=>{
-
-    let data = event.data;
-
-    if(data.type === "mouseMove"){
-
-        cursor.style.left = data.x+"px";
-        cursor.style.top = data.y+"px";
-
-
-        let el = document.elementFromPoint(
-            data.x,
-            data.y
-        );
-
-
-        if(el){
-
-            el.dispatchEvent(new MouseEvent(
-                "mouseover",
-                {
-                    bubbles:true,
-                    clientX:data.x,
-                    clientY:data.y
-                }
-            ));
-
-
-            el.dispatchEvent(new MouseEvent(
-                "mousemove",
-                {
-                    bubbles:true,
-                    clientX:data.x,
-                    clientY:data.y
-                }
-            ));
-
-
-        }
-
-    }
-
-});
-  
-
-
-window.addEventListener("message",(event)=>{
-
-    let data = event.data;
-
-
-    if(data.type === "click"){
-
-
-        let element = document.elementFromPoint(
-            data.x,
-            data.y
-        );
-
-
-        if(element){
-
-            element.click();
-
-        }
-
-
-    }
-
-
-});
-  
-
-const cursor = document.getElementById("customCursor");
-
-
-window.addEventListener("message",(event)=>{
-
-
-    let data = event.data;
-
-
-
-    if(data.type === "mouseMove"){
-
-
-        cursor.style.left =
-        data.x+"px";
-
-
-        cursor.style.top =
-        data.y+"px";
-
-
-    }
-
-  if(data.type==="resize"){
-
-    win.style.width =
-    data.width+"px";
-
-
-    win.style.height =
-    data.height+"px";
-
-}
-
-
-
-});
-  
-
-
-// ================= MACHO DUI BRIDGE =================
-
-window.addEventListener("message", (event)=>{
-
-    const data = event.data;
-
-
-    // notifications
-    if(data.type === "notify"){
-
-        notify(
-            data.text,
-            data.time || 3000
-        );
-
-    }
-
-
-
-    // create page from lua
-    if(data.type === "createPage"){
-
-        let page = makePage(
-            data.name,
-            data.icon || "home"
-        );
-
-
-        window[data.id] = page;
-
-
-        if(!window.firstPageLoaded){
-
-            page.activate();
-
-            window.firstPageLoaded = true;
-
-        }
-
-    }
-
-
-
-
-
-    // add elements from lua
-    if(data.type === "element"){
-
-
-        let page = window[data.page];
-
-
-        if(!page) return;
-
-
-
-        let section = page.section(
-            data.section || "Main",
-            data.side || 1,
-            data.icon || "cog"
-        );
-
-
-
-
-
-        if(data.element === "button"){
-
-
-            section.button({
-
-                name:data.name,
-
-
-                callback:()=>{
-
-
-                    console.log(
-                        "Button clicked:",
-                        data.name
-                    );
-
-
-                }
-
-
-            });
-
-
-        }
-
-
-
-
-
-
-        if(data.element === "toggle"){
-
-
-            section.toggle({
-
-                name:data.name,
-
-                default:data.value || false,
-
-
-                callback:(value)=>{
-
-
-                    console.log(
-                        data.name,
-                        value
-                    );
-
-
-                }
-
-
-            });
-
-
-        }
-
-
-
-
-
-
-
-        if(data.element === "slider"){
-
-
-            section.slider({
-
-                name:data.name,
-
-                min:data.min,
-
-                max:data.max,
-
-                default:data.value,
-
-
-                callback:(value)=>{
-
-
-                    console.log(
-                        data.name,
-                        value
-                    );
-
-
-                }
-
-
-            });
-
-
-        }
-
-
-
-
-
-
-
-
-        if(data.element === "dropdown"){
-
-
-
-            section.dropdown({
-
-                name:data.name,
-
-
-                items:data.items || [],
-
-
-
-                callback:(value)=>{
-
-
-                    console.log(
-                        data.name,
-                        value
-                    );
-
-
-                }
-
-
-            });
-
-
-        }
-
-
-
-    }
-
-
-
-
-});
-
-
   /* ============================================================
-     DEMO CONTENT — mirrors the kind of menu this library renders
+     MESSAGE BRIDGE — all postMessage handlers unified here
      ============================================================ */
+  const cursor = document.getElementById('customCursor');
+  let _cursorX = 0, _cursorY = 0;
 
+  window.addEventListener('message', (event) => {
+    const data = event.data;
+    if (!data || !data.type) return;
 
-// ================= MODE =================
+    // ── cursor position (move + hover) ──────────────────────────
+    if (data.type === 'mouseMove' || data.type === 'mouseHover') {
+      const x = data.x, y = data.y;
+      _cursorX = x; _cursorY = y;
 
-const TEST_MODE = false;
+      // move visual cursor
+      cursor.style.left = x + 'px';
+      cursor.style.top  = y + 'px';
 
-if(TEST_MODE){
+      // apply dui-hover class chain (CSS :hover doesn't fire on synthetic events)
+      duiHover(x, y);
+    }
 
+    // ── click ────────────────────────────────────────────────────
+    if (data.type === 'click') {
+      const element = document.elementFromPoint(data.x, data.y);
+      if (element) element.click();
+    }
 
-  const mainPage = makePage('Main', 'home');
-  const aimPage  = makePage('Combat', 'aim');
+    // ── scroll ───────────────────────────────────────────────────
+    // GTA scroll controls return ~1 for scroll-up, ~-1 for scroll-down
+    if (data.type === 'scroll' && data.amount !== 0) {
+      duiScroll(_cursorX, _cursorY, data.amount);
+    }
 
+    // ── window resize ────────────────────────────────────────────
+    if (data.type === 'resize') {
+      win.style.width  = data.width  + 'px';
+      win.style.height = data.height + 'px';
+    }
 
-  const general = mainPage.section(
-      'General',
-      1,
-      'home'
-  );
+    // ── notifications ────────────────────────────────────────────
+    if (data.type === 'notify') {
+      notify(data.text, data.time || 3000);
+    }
 
+    // ── create page ──────────────────────────────────────────────
+    if (data.type === 'createPage') {
+      const page = makePage(data.name, data.icon || 'home');
+      window[data.id] = page;
+      if (!window.firstPageLoaded) {
+        page.activate();
+        window.firstPageLoaded = true;
+      }
+    }
 
-  general.toggle({
-      name:'Enabled',
-      default:true,
-      callback:v=>notify(
-          v ? "Enabled" : "Disabled",
-          2000
-      )
-  });
+    // ── add element ──────────────────────────────────────────────
+    if (data.type === 'element') {
+      const page = window[data.page];
+      if (!page) return;
 
+      const section = page.section(
+        data.section || 'Main',
+        data.side || 1,
+        data.icon || 'cog'
+      );
 
-
-  general.button({
-
-      name:"Test Button",
-
-      callback:()=>{
-
-          notify(
-              "Button pressed",
-              2000
-          );
-
+      if (data.element === 'button') {
+        section.button({
+          name: data.name,
+          callback: () => console.log('Button clicked:', data.name)
+        });
       }
 
+      if (data.element === 'toggle') {
+        section.toggle({
+          name: data.name,
+          default: data.value || false,
+          callback: (value) => console.log(data.name, value)
+        });
+      }
+
+      if (data.element === 'slider') {
+        section.slider({
+          name: data.name,
+          min: data.min,
+          max: data.max,
+          default: data.value,
+          callback: (value) => console.log(data.name, value)
+        });
+      }
+
+      if (data.element === 'dropdown') {
+        section.dropdown({
+          name: data.name,
+          items: data.items || [],
+          callback: (value) => console.log(data.name, value)
+        });
+      }
+    }
   });
 
+  /* ============================================================
+     TEST MODE
+     ============================================================ */
+  const TEST_MODE = false;
+  if (TEST_MODE) {
+    const mainPage = makePage('Main', 'home');
+    const aimPage  = makePage('Combat', 'aim');
 
+    const general = mainPage.section('General', 1, 'home');
+    general.toggle({ name:'Enabled', default:true, callback:v=>notify(v?"Enabled":"Disabled",2000) });
+    general.button({ name:"Test Button", callback:()=>notify("Button pressed",2000) });
+    general.slider({ name:"Speed", min:0, max:100, default:50 });
+    general.dropdown({ name:"Weapon", items:["AK","M4","Sniper"], default:"AK" });
 
-  general.slider({
+    const combat = aimPage.section("Combat", 1, "aim");
+    combat.toggle({ name:"Aimbot", default:false });
 
-      name:"Speed",
-
-      min:0,
-
-      max:100,
-
-      default:50
-
-  });
-
-
-
-  general.dropdown({
-
-      name:"Weapon",
-
-      items:[
-          "AK",
-          "M4",
-          "Sniper"
-      ],
-
-      default:"AK"
-
-  });
-
-
-
-  const combat = aimPage.section(
-      "Combat",
-      1,
-      "aim"
-  );
-
-
-  combat.toggle({
-
-      name:"Aimbot",
-
-      default:false
-
-  });
-
-
-
-  mainPage.activate();
-
-
-  notify(
-      "Demo Loaded",
-      2500
-  );
-
-
-}
+    mainPage.activate();
+    notify("Demo Loaded", 2500);
+  }
 
   window.LDS13_DEMO = { flags, notify };
 })();
