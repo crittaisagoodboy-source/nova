@@ -775,7 +775,13 @@ function sendToLua(data){
   /* ── keep refs to element APIs keyed by eid ──────────────────── */
   const _elementRefs = {};
     window._pendingEvents = window._pendingEvents || [];
-  function pushEvent(ev){ window._pendingEvents.push(ev); }
+  function pushEvent(ev){
+    console.log("PUSH EVENT", ev);
+
+    window._pendingEvents = window._pendingEvents || [];
+
+    window._pendingEvents.push(ev);
+}
 
   /* ── MESSAGE BRIDGE ──────────────────────────────────────────── */
   window.addEventListener('message', (event) => {
