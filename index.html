@@ -774,6 +774,8 @@ function sendToLua(data){
 
   /* ── keep refs to element APIs keyed by eid ──────────────────── */
   const _elementRefs = {};
+    window._pendingEvents = window._pendingEvents || [];
+  function pushEvent(ev){ window._pendingEvents.push(ev); }
 
   /* ── MESSAGE BRIDGE ──────────────────────────────────────────── */
   window.addEventListener('message', (event) => {
@@ -836,11 +838,13 @@ function sendToLua(data){
       if(!page) return;
       const section=page.section(data.section||'Main', data.side||1, data.icon||'cog');
 
-      if(data.element==='button'){
+
+
+if(data.element==='button'){
         const ref=section.button({
           id:data.id,
           name:data.name,
-          callback:()=>{ sendToLua({ type:'elementClick', id:data.id }); }
+          callback:()=>{ pushEvent({ type:'elementClick', id:data.id }); }
         });
         _elementRefs[data.id]=ref;
       }
@@ -850,7 +854,7 @@ function sendToLua(data){
           id:data.id,
           name:data.name,
           default:data.value||false,
-          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+          callback:(v)=>{ pushEvent({ type:'elementChange', id:data.id, value:v }); }
         });
         _elementRefs[data.id]=ref;
       }
@@ -862,7 +866,7 @@ function sendToLua(data){
           min:data.min,
           max:data.max,
           default:data.value,
-          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+          callback:(v)=>{ pushEvent({ type:'elementChange', id:data.id, value:v }); }
         });
         _elementRefs[data.id]=ref;
       }
@@ -872,10 +876,12 @@ function sendToLua(data){
           id:data.id,
           name:data.name,
           items:data.items||[],
-          callback:(v)=>{ sendToLua({ type:'elementChange', id:data.id, value:v }); }
+          callback:(v)=>{ pushEvent({ type:'elementChange', id:data.id, value:v }); }
         });
         _elementRefs[data.id]=ref;
       }
+
+      
     }
 
     /* ── updateElement — Lua tells JS to visually reflect new state ── */
